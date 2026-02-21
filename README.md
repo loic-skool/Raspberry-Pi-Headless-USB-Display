@@ -1,3 +1,4 @@
+📟 Raspberry Pi Headless USB Display
 IP • MAC • RAM Monitoring via RP2350
 
 Mini dashboard USB pour Raspberry Pi headless.
