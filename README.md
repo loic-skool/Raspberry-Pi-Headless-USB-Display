@@ -1,44 +1,31 @@
 📟 Raspberry Pi Headless USB Display
-IP • MAC • RAM Monitoring via RP2350
 
-Mini dashboard USB pour Raspberry Pi headless.
+Mini dashboard USB pour Raspberry Pi headless
+Affiche IP, MAC et RAM en temps réel sur un écran RP2350.
 
-Affiche automatiquement :
+✨ Aperçu
 
-Hostname
+Transforme ton Raspberry Pi headless en serveur visuellement monitoré, sans écran HDMI.
 
-IP WiFi
+L’écran affiche automatiquement :
 
-IP Ethernet
+🖥 Hostname
 
-Adresse MAC
+🌐 IP WiFi / Ethernet
 
-Utilisation RAM
+🔗 Adresse MAC
 
-Aucun écran HDMI requis.
-Idéal pour homelab, serveurs headless et projets cybersécurité.
-
-🧰 Prérequis
-
-Raspberry Pi (Zero 2 W / 3 / 4 / 5)
-
-Raspberry Pi OS Lite
-
-RP2350 + écran 1.47"
-
-Arduino IDE
-
-Câble USB
+🧠 Utilisation RAM
 
 🧱 Architecture
 Raspberry Pi (Linux)
-        ↓ USB CDC
-RP2350 (périphérique série)
-        ↓
-Écran LCD
+        │
+        │ USB (CDC Serial)
+        ▼
+RP2350 + LCD 1.47"
 
-Le Raspberry Pi envoie les informations système via USB.
-Le Pico les reçoit et les affiche.
+Le Raspberry Pi envoie les données système via USB.
+Le RP2350 les reçoit et les affiche.
 
 📂 Structure du projet
 .
@@ -47,11 +34,9 @@ Le Pico les reçoit et les affiche.
 └── raspberry-pi/
     └── usb-ip-display.sh
 🚀 Installation
-🔹 1️⃣ Flasher le RP2350 (la clé USB)
+1️⃣ Flasher le RP2350
 
-Ouvrir Arduino IDE.
-
-Tools →
+Dans Arduino IDE :
 
 Board → Raspberry Pi Pico 2
 
@@ -59,16 +44,18 @@ USB Stack → Adafruit TinyUSB
 
 USB Mode → CDC only
 
-Téléverser le firmware :
+Uploader :
 
 firmware/HeadlessIpDisplay.ino
 
-Une fois branché au Raspberry Pi, le Pico doit apparaître comme :
+Brancher ensuite le RP2350 au Raspberry Pi.
 
-/dev/ttyACM0
-🔹 2️⃣ Installer le script sur le Raspberry Pi
+Vérifier qu’il est détecté :
 
-Copier le fichier :
+ls /dev/ttyACM*
+2️⃣ Installer le script sur le Raspberry Pi
+
+Copier le script :
 
 raspberry-pi/usb-ip-display.sh
 
@@ -76,20 +63,17 @@ Dans :
 
 /usr/local/bin/
 
-Puis rendre exécutable :
+Puis :
 
 sudo chmod +x /usr/local/bin/usb-ip-display.sh
-🔹 3️⃣ Test manuel
-
-Brancher le RP2350 au Raspberry Pi puis exécuter :
-
+3️⃣ Test manuel
 sudo /usr/local/bin/usb-ip-display.sh
 
 L’écran devrait immédiatement afficher les informations système.
 
-🔁 (Optionnel) Automatisation avec systemd
+🔄 Mise à jour automatique (optionnel)
 
-Créer un service :
+Créer un service systemd :
 
 sudo nano /etc/systemd/system/usb-ip-display.service
 [Unit]
@@ -125,3 +109,16 @@ WIFI: 192.168.1.42
 ETH: ---
 WIFI_MAC: b8:27:eb:xx:xx:xx
 RAM: 612MB/1998MB (30%)
+🧠 Comment ça fonctionne ?
+
+Le Raspberry Pi envoie des lignes formatées :
+
+KEY:VALUE
+
+Exemple :
+
+HOST:raspberrypi
+WIFI:192.168.1.42
+RAM:612MB/1998MB (30%)
+
+Le firmware interprète ces clés et met à jour l’écran.
