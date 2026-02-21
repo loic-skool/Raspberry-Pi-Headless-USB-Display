@@ -1,0 +1,32 @@
+#!/bin/bash
+
+DEVICE="/dev/ttyACM0"
+[ ! -e "$DEVICE" ] && exit 0
+
+HOSTNAME=$(hostname)
+
+WIFI_IP=$(ip -4 addr show wlan0 2>/dev/null | awk '/inet / {print $2}')
+ETH_IP=$(ip -4 addr show eth0 2>/dev/null | awk '/inet / {print $2}')
+
+WIFI_MAC=$(cat /sys/class/net/wlan0/address 2>/dev/null)
+ETH_MAC=$(cat /sys/class/net/eth0/address 2>/dev/null)
+
+RAM_TOTAL=$(free -m | awk '/Mem:/ {print $2}')
+RAM_USED=$(free -m | awk '/Mem:/ {print $3}')
+RAM_PERCENT=$((RAM_USED * 100 / RAM_TOTAL))
+
+echo -e "HOST:$HOSTNAME\n" > $DEVICE
+[ -n "$WIFI_IP" ] && echo -e "WIFI:$WIFI_IP\n" > $DEVICE
+[ -n "$ETH_IP" ] && echo -e "ETH:$ETH_IP\n" > $DEVICE
+[ -n "$WIFI_MAC" ] && echo -e "WIFI_MAC:$WIFI_MAC\n" > $DEVICE
+[ -n "$ETH_MAC" ] && echo -e "ETH_MAC:$ETH_MAC\n" > $DEVICE
+echo -e "RAM:${RAM_USED}MB/${RAM_TOTAL}MB (${RAM_PERCENT}%)\n" > $DEVICE
+
+
+
+
+
+
+Rendre exécutable :
+
+sudo chmod +x /usr/local/bin/usb-ip-display.sh
